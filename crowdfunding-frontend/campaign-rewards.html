@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Rewards - Fundify</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="campaign-form.css">
+</head>
+<body>
+    <header>
+        <nav class="main-nav">
+            <a href="index.html" class="logo">
+                <img src="assets/images/logo.svg" alt="Fundify">
+            </a>
+            <div class="nav-links">
+                <a href="#explore">Explore Tech Projects</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#stories">Success Stories</a>
+                <a href="#community">Tech Community</a>
+            </div>
+            <div class="auth-buttons">
+                <a href="/signin" class="btn-secondary">Sign in</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="campaign-form">
+        <div class="form-container">
+            <div class="form-progress">
+                <div class="progress-step completed">
+                    <span class="step-number">✓</span>
+                    <span class="step-label">Basics</span>
+                </div>
+                <div class="progress-step completed">
+                    <span class="step-number">✓</span>
+                    <span class="step-label">Details</span>
+                </div>
+                <div class="progress-step active">
+                    <span class="step-number">3</span>
+                    <span class="step-label">Rewards</span>
+                </div>
+                <div class="progress-step">
+                    <span class="step-number">4</span>
+                    <span class="step-label">Preview</span>
+                </div>
+            </div>
+
+            <form id="campaign-rewards">
+                <h1>Set up your rewards</h1>
+                <p class="form-subtitle">Create compelling rewards to attract backers</p>
+
+                <div id="rewards-container">
+                    <div class="reward-tier">
+                        <div class="reward-header">
+                            <h3>Reward Tier 1</h3>
+                            <button type="button" class="btn-remove-tier">×</button>
+                        </div>
+                        <div class="form-group">
+                            <label for="tier-name-1">Tier Name</label>
+                            <input type="text" id="tier-name-1" name="rewards[0][name]" required
+                                   placeholder="e.g., Early Bird Access">
+                        </div>
+                        <div class="form-group">
+                            <label for="tier-amount-1">Pledge Amount</label>
+                            <div class="input-with-prefix">
+                                <span class="prefix">$</span>
+                                <input type="number" id="tier-amount-1" name="rewards[0][amount]" required
+                                       placeholder="e.g., 99" min="1">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="tier-description-1">Description</label>
+                            <textarea id="tier-description-1" name="rewards[0][description]" required
+                                    placeholder="What backers will receive..." rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="tier-limit-1">Quantity Available (Optional)</label>
+                            <input type="number" id="tier-limit-1" name="rewards[0][limit]"
+                                   placeholder="Leave blank for unlimited" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="tier-delivery-1">Estimated Delivery</label>
+                            <input type="month" id="tier-delivery-1" name="rewards[0][delivery]" required>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" id="add-reward-tier" class="btn-secondary">
+                    + Add Another Reward Tier
+                </button>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="window.location.href='campaign-details.html'">Back</button>
+                    <button type="submit" class="btn-primary">Continue to Preview</button>
+                </div>
+            </form>
+        </div>
+    </main>
+    <script src="campaign-form.js"></script>
+</body>
+</html> 

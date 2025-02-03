@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Details - Fundify</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="campaign-form.css">
+</head>
+<body>
+    <header>
+        <nav class="main-nav">
+            <a href="/" class="logo">
+                <img src="assets/images/logo.svg" alt="Fundify">
+            </a>
+            <div class="nav-links">
+                <a href="#explore">Explore Tech Projects</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#stories">Success Stories</a>
+                <a href="#community">Tech Community</a>
+            </div>
+            <div class="auth-buttons">
+                <a href="/signin" class="btn-secondary">Sign in</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="campaign-form">
+        <div class="form-container">
+            <div class="form-progress">
+                <div class="progress-step completed">
+                    <span class="step-number">✓</span>
+                    <span class="step-label">Basics</span>
+                </div>
+                <div class="progress-step active">
+                    <span class="step-number">2</span>
+                    <span class="step-label">Details</span>
+                </div>
+                <div class="progress-step">
+                    <span class="step-number">3</span>
+                    <span class="step-label">Rewards</span>
+                </div>
+                <div class="progress-step">
+                    <span class="step-number">4</span>
+                    <span class="step-label">Preview</span>
+                </div>
+            </div>
+
+            <form id="campaign-details">
+                <h1>Tell us more about your project</h1>
+                <p class="form-subtitle">Help backers understand your tech innovation</p>
+
+                <div class="form-group">
+                    <label for="project-description">Project Description</label>
+                    <textarea id="project-description" name="description" required
+                            placeholder="Describe your project in detail..." rows="6"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="project-image">Project Image</label>
+                    <div class="file-upload">
+                        <input type="file" id="project-image" name="image" accept="image/*" required>
+                        <p class="input-hint">Recommended: 1200x675px, PNG or JPG</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="project-video">Project Video (Optional)</label>
+                    <input type="url" id="project-video" name="video" 
+                           placeholder="e.g., https://youtube.com/watch?v=...">
+                    <p class="input-hint">YouTube or Vimeo URL</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="project-features">Key Features</label>
+                    <div id="features-container">
+                        <div class="feature-input">
+                            <input type="text" name="features[]" placeholder="Add a key feature">
+                            <button type="button" class="btn-add-feature">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="window.location.href='start.html'">Back</button>
+                    <button type="submit" class="btn-primary">Continue to Rewards</button>
+                </div>
+            </form>
+        </div>
+    </main>
+    <script src="campaign-form.js"></script>
+</body>
+</html> 

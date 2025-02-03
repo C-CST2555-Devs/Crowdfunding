@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Preview - Fundify</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="campaign-form.css">
+</head>
+<body>
+    <header>
+        <nav class="main-nav">
+            <a href="index.html" class="logo">
+                <img src="assets/images/logo.svg" alt="Fundify">
+            </a>
+            <div class="nav-links">
+                <a href="#explore">Explore Tech Projects</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#stories">Success Stories</a>
+                <a href="#community">Tech Community</a>
+            </div>
+            <div class="auth-buttons">
+                <a href="/signin" class="btn-secondary">Sign in</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="campaign-form">
+        <div class="form-container">
+            <div class="form-progress">
+                <div class="progress-step completed">
+                    <span class="step-number">✓</span>
+                    <span class="step-label">Basics</span>
+                </div>
+                <div class="progress-step completed">
+                    <span class="step-number">✓</span>
+                    <span class="step-label">Details</span>
+                </div>
+                <div class="progress-step completed">
+                    <span class="step-number">✓</span>
+                    <span class="step-label">Rewards</span>
+                </div>
+                <div class="progress-step active">
+                    <span class="step-number">4</span>
+                    <span class="step-label">Preview</span>
+                </div>
+            </div>
+
+            <div id="campaign-preview">
+                <h1>Preview Your Campaign</h1>
+                <p class="form-subtitle">Review all details before launching</p>
+
+                <div class="preview-section">
+                    <h2>Basic Information</h2>
+                    <div class="preview-content" id="basics-preview">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="preview-section">
+                    <h2>Project Details</h2>
+                    <div class="preview-content" id="details-preview">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="preview-section">
+                    <h2>Reward Tiers</h2>
+                    <div class="preview-content" id="rewards-preview">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="window.location.href='campaign-rewards.html'">Back</button>
+                    <button type="button" class="btn-primary" id="launch-campaign">Launch Campaign</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="campaign-form.js"></script>
+    <script>
+        // Load and display preview data
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load stored data
+            const basics = JSON.parse(sessionStorage.getItem('campaign-basics') || '{}');
+            const details = JSON.parse(sessionStorage.getItem('campaign-details') || '{}');
+            const rewards = JSON.parse(sessionStorage.getItem('campaign-rewards') || '{"rewards":[]}');
+
+            // Display basics preview
+            document.getElementById('basics-preview').innerHTML = `
+                <div class="preview-item">
+                    <strong>Project Title:</strong> ${basics.title || ''}
+                </div>
+                <div class="preview-item">
+                    <strong>Category:</strong> ${basics.category || ''}
+                </div>
+                <div class="preview-item">
+                    <strong>Funding Goal:</strong> $${basics.goal || '0'}
+                </div>
+                <div class="preview-item">
+                    <strong>Duration:</strong> ${basics.duration || '0'} days
+                </div>
+            `;
+
+            // Display details preview
+            document.getElementById('details-preview').innerHTML = `
+                <div class="preview-item">
+                    <strong>Description:</strong>
+                    <p>${details.description || ''}</p>
+                </div>
+                ${details.features ? `
+                <div class="preview-item">
+                    <strong>Key Features:</strong>
+                    <ul>
+                        ${details.features.map(feature => `<li>${feature}</li>`).join('')}
+                    </ul>
+                </div>
+                ` : ''}
+            `;
+
+            // Display rewards preview
+            const rewardsHtml = rewards.rewards.map((reward, index) => `
+                <div class="preview-reward-tier">
+                    <h3>${reward.name}</h3>
+                    <div class="preview-item">
+                        <strong>Pledge Amount:</strong> $${reward.amount}
+                    </div>
+                    <div class="preview-item">
+                        <strong>Description:</strong>
+                        <p>${reward.description}</p>
+                    </div>
+                    ${reward.limit ? `
+                    <div class="preview-item">
+                        <strong>Limited Quantity:</strong> ${reward.limit}
+                    </div>
+                    ` : ''}
+                    <div class="preview-item">
+                        <strong>Estimated Delivery:</strong> ${reward.delivery}
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('rewards-preview').innerHTML = rewardsHtml;
+
+            // Handle launch button
+            document.getElementById('launch-campaign').addEventListener('click', function() {
+                alert('Campaign submitted successfully!');
+                // Clear session storage
+                sessionStorage.clear();
+                // Redirect to home
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
+</body>
+</html> 

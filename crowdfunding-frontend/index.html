@@ -3,16 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crowdfunding Platform</title>
+    <title>Fundify - Tech Crowdfunding Platform</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Welcome to Crowdfunding Platform</h1>
-    <div id="campaigns-container">
-        <h2>Active Campaigns</h2>
-        <ul id="campaigns-list"></ul>
-    </div>
+    <header>
+        <nav class="main-nav">
+            <a href="index.html" class="logo">
+                <img src="assets/images/logo.svg" alt="Fundify">
+            </a>
+            <div class="nav-links">
+                <a href="#explore">Explore Tech Projects</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#stories">Success Stories</a>
+                <a href="#community">Tech Community</a>
+            </div>
+            <div class="auth-buttons">
+                <a href="start.html" class="btn-primary">Start a Campaign</a>
+                <a href="/signin" class="btn-secondary">Sign in</a>
+            </div>
+        </nav>
+    </header>
 
-    <script src="script.js"></script>
+    <main>
+        <div class="fundraising-journey">
+            <p class="journey-subtitle">Launch Your Tech Project</p>
+            <h1>What type of technology are you crowdfunding?</h1>
+            <div class="select-wrapper">
+                <select id="fundraising-type" aria-label="Select technology type">
+                    <option value="" disabled selected>Please select</option>
+                    <option value="saas">SaaS / Subscription Software</option>
+                    <option value="ai">AI / Machine Learning Tools</option>
+                    <option value="dev">Developer Tools & Open Source</option>
+                    <option value="hardware">Hardware & IoT</option>
+                    <option value="blockchain">Blockchain & Web3</option>
+                </select>
+            </div>
+        </div>
+    </main>
+
+    <section class="active-campaigns">
+        <div class="container">
+            <h2>Trending Tech Projects</h2>
+            <div class="search-filter-container">
+                <div class="search-bar">
+                    <input type="text" id="campaign-search" placeholder="Search campaigns...">
+                    <button class="search-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 21L16.5 16.5M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="category-filters">
+                    <button class="filter-btn active">All</button>
+                    <button class="filter-btn">SaaS</button>
+                    <button class="filter-btn">AI/ML</button>
+                    <button class="filter-btn">Hardware</button>
+                    <button class="filter-btn">Web3</button>
+                </div>
+            </div>
+            <div class="campaigns-grid">
+                <article class="campaign-card">
+                    <div class="campaign-image">
+                        <img src="assets/images/ai-project.png" alt="AI Code Assistant">
+                        <span class="category">AI/ML</span>
+                    </div>
+                    <div class="campaign-content">
+                        <h3>CodeAI - Intelligent Code Completion</h3>
+                        <p class="description">Next-gen AI code assistant with real-time collaboration features.</p>
+                        <div class="progress-wrapper">
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 75%"></div>
+                            </div>
+                            <div class="campaign-stats">
+                                <div class="amount">$157,500 raised</div>
+                                <div class="target">of $200,000</div>
+                            </div>
+                            <div class="campaign-meta">
+                                <span>324 backers</span>
+                                <span>15 days left</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="campaign-card">
+                    <div class="campaign-image">
+                        <img src="assets/images/saas-project.jpg" alt="Cloud Analytics Platform">
+                        <span class="category">SaaS</span>
+                    </div>
+                    <div class="campaign-content">
+                        <h3>DataFlow - Cloud Analytics Suite</h3>
+                        <p class="description">Enterprise-grade analytics platform for modern data teams.</p>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 45%"></div>
+                        </div>
+                        <div class="campaign-stats">
+                            <span class="amount">$45,000 raised</span>
+                            <span class="target">of $100,000</span>
+                        </div>
+                        <div class="campaign-meta">
+                            <span class="backers">156 backers</span>
+                            <span class="time-left">28 days left</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="campaign-card">
+                    <div class="campaign-image">
+                        <img src="assets/images/hardware-project.jpg" alt="Smart Home Hub">
+                        <span class="category">Hardware</span>
+                    </div>
+                    <div class="campaign-content">
+                        <h3>HomeHub - Smart Home Controller</h3>
+                        <p class="description">Open-source smart home hub with Matter protocol support.</p>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 90%"></div>
+                        </div>
+                        <div class="campaign-stats">
+                            <span class="amount">$90,000 raised</span>
+                            <span class="target">of $100,000</span>
+                        </div>
+                        <div class="campaign-meta">
+                            <span class="backers">412 backers</span>
+                            <span class="time-left">7 days left</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-group">
+                <h3>For Tech Startups</h3>
+                <a href="#">Launch a Campaign</a>
+                <a href="#">Creator Guidelines</a>
+                <a href="#">Success Stories</a>
+            </div>
+            <div class="footer-group">
+                <h3>For Investors & Backers</h3>
+                <a href="#">How to Invest</a>
+                <a href="#">Trust & Safety</a>
+                <a href="#">Backer Protection</a>
+            </div>
+            <div class="footer-group">
+                <h3>Resources</h3>
+                <a href="#">Blog & Insights</a>
+                <a href="#">Tech Community</a>
+                <a href="#">Help Center</a>
+            </div>
+        </div>
+    </footer>
+    <script src="index.js"></script>
 </body>
 </html> 
