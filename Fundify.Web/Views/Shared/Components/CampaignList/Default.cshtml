@@ -1,0 +1,6 @@
+@model IEnumerable<Campaign>
+
+@foreach (var campaign in Model)
+{
+    <partial name="_CampaignCard" model="campaign" />
+} 

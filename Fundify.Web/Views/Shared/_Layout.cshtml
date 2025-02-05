@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Fundify</title>
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/campaign-form.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body>
+    <header>
+        <nav class="main-nav">
+            <a asp-controller="Home" asp-action="Index" class="logo">
+                <img src="~/images/logo.svg" alt="Fundify">
+            </a>
+            <div class="nav-links">
+                <a href="#explore">Explore Tech Projects</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#stories">Success Stories</a>
+                <a href="#community">Tech Community</a>
+            </div>
+            <div class="auth-buttons">
+                <a asp-controller="Campaign" asp-action="Create" class="btn-primary">Start a Campaign</a>
+                <a href="/signin" class="btn-secondary">Sign in</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-group">
+                <h3>For Tech Startups</h3>
+                <a href="#">Launch a Campaign</a>
+                <a href="#">Creator Guidelines</a>
+                <a href="#">Success Stories</a>
+            </div>
+            <div class="footer-group">
+                <h3>For Investors & Backers</h3>
+                <a href="#">How to Invest</a>
+                <a href="#">Trust & Safety</a>
+                <a href="#">Backer Protection</a>
+            </div>
+            <div class="footer-group">
+                <h3>Resources</h3>
+                <a href="#">Blog & Insights</a>
+                <a href="#">Tech Community</a>
+                <a href="#">Help Center</a>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/campaign-form.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html> 

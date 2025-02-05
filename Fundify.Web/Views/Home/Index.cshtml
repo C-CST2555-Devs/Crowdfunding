@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="fundraising-journey">
+    <p class="journey-subtitle">Launch Your Tech Project</p>
+    <h1>What type of technology are you crowdfunding?</h1>
+    <div class="select-wrapper">
+        <select id="fundraising-type" aria-label="Select technology type">
+            <option value="" disabled selected>Please select</option>
+            <option value="saas">SaaS / Subscription Software</option>
+            <option value="ai">AI / Machine Learning Tools</option>
+            <option value="dev">Developer Tools & Open Source</option>
+            <option value="hardware">Hardware & IoT</option>
+            <option value="blockchain">Blockchain & Web3</option>
+        </select>
+    </div>
+</div>
+
+<section class="active-campaigns">
+    <div class="container">
+        <h2>Trending Tech Projects</h2>
+        <div class="search-filter-container">
+            <div class="search-bar">
+                <input type="text" id="campaign-search" placeholder="Search campaigns...">
+                <button class="search-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 21L16.5 16.5M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="category-filters">
+                <button class="filter-btn active">All</button>
+                <button class="filter-btn">SaaS</button>
+                <button class="filter-btn">AI/ML</button>
+                <button class="filter-btn">Hardware</button>
+                <button class="filter-btn">Web3</button>
+            </div>
+        </div>
+        <div class="campaigns-grid">
+            @await Component.InvokeAsync("CampaignList")
+        </div>
+    </div>
+</section>

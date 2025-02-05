@@ -1,0 +1,198 @@
+@model Fundify.Web.ViewModels.CampaignViewModel
+@{
+    ViewData["Title"] = "Create Campaign";
+    var currentStep = (int)(ViewData["Step"] ?? 1);
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var modelState in ViewData.ModelState.Values)
+            {
+                foreach (var error in modelState.Errors)
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            }
+        </ul>
+    </div>
+}
+
+<div class="campaign-form">
+    <div class="form-container">
+        <div class="form-progress">
+            <div class="progress-step @(currentStep == 1 ? "active completed" : "")">
+                <div class="step-number">
+                    @if (currentStep > 1)
+                    {
+                        <i class="fas fa-check"></i>
+                    }
+                    else
+                    {
+                        <span>1</span>
+                    }
+                </div>
+                <span class="step-label">Basics</span>
+            </div>
+            <div class="progress-step @(currentStep == 2 ? "active" : "")">
+                <div class="step-number">2</div>
+                <span class="step-label">Details</span>
+            </div>
+            <div class="progress-step @(currentStep == 3 ? "active" : "")">
+                <div class="step-number">3</div>
+                <span class="step-label">Rewards</span>
+            </div>
+            <div class="progress-step @(currentStep == 4 ? "active" : "")">
+                <div class="step-number">4</div>
+                <span class="step-label">Preview</span>
+            </div>
+        </div>
+
+        <form id="campaign-basics" asp-action="Create" method="post">
+            <input type="hidden" name="step" value="@currentStep" />
+
+            @if (currentStep == 1)
+            {
+                <h1>Let's start with the basics</h1>
+                <p class="form-subtitle">Tell us about your tech project</p>
+
+                <div class="form-group">
+                    <label asp-for="Title">Project Title</label>
+                    <input asp-for="Title" class="form-control" 
+                           placeholder="e.g., NextGen AI Development Platform">
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Category">Project Category</label>
+                    <select asp-for="Category" class="form-control">
+                        <option value="" disabled selected>Select a category</option>
+                        <option value="SaaS">SaaS / Subscription Software</option>
+                        <option value="AI/ML">AI / Machine Learning Tools</option>
+                        <option value="Dev">Developer Tools & Open Source</option>
+                        <option value="Hardware">Hardware & IoT</option>
+                        <option value="Web3">Blockchain & Web3</option>
+                    </select>
+                    <span asp-validation-for="Category" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Goal">Funding Goal</label>
+                    <div class="input-with-prefix">
+                        <span class="prefix">$</span>
+                        <input asp-for="Goal" type="number" class="form-control" 
+                               placeholder="e.g., 50000" min="1000">
+                    </div>
+                    <span asp-validation-for="Goal" class="text-danger"></span>
+                    <p class="input-hint">Minimum $1,000 USD</p>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DurationInDays">Campaign Duration</label>
+                    <select asp-for="DurationInDays" class="form-control">
+                        <option value="" disabled selected>Select duration</option>
+                        <option value="30">30 days</option>
+                        <option value="45">45 days</option>
+                        <option value="60">60 days</option>
+                    </select>
+                    <span asp-validation-for="DurationInDays" class="text-danger"></span>
+                </div>
+            }
+            else if (currentStep == 2)
+            {
+                <h1>Tell us more about your project</h1>
+                <p class="form-subtitle">Help backers understand your tech innovation</p>
+
+                <div class="form-section">
+                    <label>Project Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="6" 
+                             placeholder="Describe your project in detail..."></textarea>
+                </div>
+
+                <div class="form-section">
+                    <label>Project Image</label>
+                    <div class="file-upload-box">
+                        <div class="upload-content">
+                            <label for="ImageFile" class="upload-btn">Choose file</label>
+                            <span class="file-name">@(Model?.ImageFileName ?? "No file chosen")</span>
+                            <input type="file" id="ImageFile" name="ImageFile" class="hidden" 
+                                   accept="image/png,image/jpeg" asp-for="ImageFile">
+                        </div>
+                    </div>
+                    <p class="input-hint">Recommended: 1200x675px, PNG or JPG</p>
+                    <span asp-validation-for="ImageFile" class="text-danger"></span>
+                </div>
+
+                <div class="form-section">
+                    <label>Project Video (Optional)</label>
+                    <input type="text" class="form-control" 
+                           placeholder="e.g., https://youtube.com/watch?v=...">
+                    <p class="input-hint">YouTube or Vimeo URL</p>
+                </div>
+
+                <div class="form-section">
+                    <label>Key Features</label>
+                    <div class="features-list">
+                        <div class="feature-input">
+                            <input type="text" class="form-control" placeholder="Add a key feature">
+                            <button type="button" class="add-feature-btn">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (currentStep == 3)
+            {
+                <h1>Rewards</h1>
+                <p class="form-subtitle">Create compelling rewards for your backers</p>
+                
+                <!-- Rewards form fields will go here -->
+            }
+            else
+            {
+                <h1>Preview Your Campaign</h1>
+                <p class="form-subtitle">Review everything before launch</p>
+                
+                <!-- Preview content will go here -->
+            }
+
+            <div class="form-actions">
+                @if (currentStep > 1)
+                {
+                    <a asp-action="Create" asp-route-step="@(currentStep - 1)" class="btn-secondary">Back</a>
+                }
+                else
+                {
+                    <a asp-controller="Home" asp-action="Index" class="btn-secondary">Cancel</a>
+                }
+
+                <button type="submit" class="btn-primary">
+                    @if (currentStep == 2)
+                    {
+                        <span>Continue to Rewards</span>
+                    }
+                    else if (currentStep == 4)
+                    {
+                        <span>Launch Campaign</span>
+                    }
+                    else
+                    {
+                        <span>Continue</span>
+                    }
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Add client-side validation
+        $(document).ready(function() {
+            $("#campaign-basics").validate();
+        });
+    </script>
+} 

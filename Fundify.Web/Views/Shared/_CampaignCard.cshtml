@@ -1,0 +1,32 @@
+@model Campaign
+
+<article class="campaign-card">
+    <div class="campaign-image">
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" alt="@Model.Title">
+        }
+        else
+        {
+            <div class="placeholder-image"></div>
+        }
+        <span class="category">@Model.Category</span>
+    </div>
+    <div class="campaign-content">
+        <h3>@Model.Title</h3>
+        <p class="description">@Model.Description</p>
+        <div class="progress-wrapper">
+            <div class="progress-bar">
+                <div class="progress" style="width: @(Model.RaisedAmount / Model.Goal * 100)%"></div>
+            </div>
+            <div class="campaign-stats">
+                <div class="amount">$@Model.RaisedAmount.ToString("N0") raised</div>
+                <div class="target">of $@Model.Goal.ToString("N0")</div>
+            </div>
+            <div class="campaign-meta">
+                <span>@Model.BackerCount backers</span>
+                <span>@Model.DurationInDays days left</span>
+            </div>
+        </div>
+    </div>
+</article> 

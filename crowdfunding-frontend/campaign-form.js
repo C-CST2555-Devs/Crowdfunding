@@ -128,9 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Store form data in sessionStorage
             const formData = new FormData(this);
-            const formObject = {
-                rewards: []
-            };
+            const rewards = [];
             
             // Group reward data
             for (let [key, value] of formData.entries()) {
@@ -138,15 +136,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     const matches = key.match(/rewards\[(\d+)\]\[(\w+)\]/);
                     if (matches) {
                         const [, index, field] = matches;
-                        if (!formObject.rewards[index]) {
-                            formObject.rewards[index] = {};
-                        }
-                        formObject.rewards[index][field] = value;
+                        if (!rewards[index]) rewards[index] = {};
+                        rewards[index][field] = value;
                     }
                 }
             }
             
-            sessionStorage.setItem('campaign-rewards', JSON.stringify(formObject));
+            sessionStorage.setItem('campaign-rewards', JSON.stringify({ rewards }));
             
             // Navigate to preview page
             window.location.href = 'campaign-preview.html';
@@ -155,34 +151,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle launch button in preview page
     if (document.getElementById('launch-campaign')) {
-        document.getElementById('launch-campaign').addEventListener('click', function() {
-            // Get all campaign data
+        document.getElementById('launch-campaign').addEventListener('click', async function() {
+            const basics = JSON.parse(sessionStorage.getItem('campaign-basics'));
+            const details = JSON.parse(sessionStorage.getItem('campaign-details'));
+            const rewardsData = JSON.parse(sessionStorage.getItem('campaign-rewards'));
+
             const campaignData = {
-                basics: JSON.parse(sessionStorage.getItem('campaign-basics') || '{}'),
-                details: JSON.parse(sessionStorage.getItem('campaign-details') || '{}'),
-                rewards: JSON.parse(sessionStorage.getItem('campaign-rewards') || '{"rewards":[]}'),
-                stats: {
-                    backers: 0,
-                    daysLeft: parseInt(sessionStorage.getItem('campaign-basics').duration) || 30,
-                    raisedAmount: 0,
-                    createdAt: new Date().toISOString()
-                }
+                title: basics.title,
+                category: basics.category,
+                goal: parseFloat(basics.goal),
+                description: details.description,
+                durationInDays: parseInt(basics.duration),
+                rewards: rewardsData.rewards.map(reward => ({
+                    name: reward.name,
+                    amount: parseFloat(reward.amount),
+                    description: reward.description,
+                    limit: reward.limit ? parseInt(reward.limit) : null,
+                    estimatedDelivery: new Date(reward.delivery)
+                }))
             };
 
-            // Get existing campaigns or initialize empty array
-            const existingCampaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
-            
-            // Add new campaign to the beginning of the array
-            existingCampaigns.unshift(campaignData);
-            
-            // Save to localStorage
-            localStorage.setItem('campaigns', JSON.stringify(existingCampaigns));
-            
-            alert('Campaign submitted successfully!');
-            // Clear session storage
-            sessionStorage.clear();
-            // Redirect to home
-            window.location.href = 'index.html';
+            try {
+                const response = await fetch('https://localhost:7000/api/campaigns', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(campaignData)
+                });
+
+                if (!response.ok) throw new Error('Failed to create campaign');
+
+                alert('Campaign submitted successfully!');
+                sessionStorage.clear();
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Error creating campaign:', error);
+                alert('Failed to create campaign. Please try again.');
+            }
         });
     }
 }); 

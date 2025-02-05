@@ -1,67 +1,41 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Pre-existing campaigns
-    const preExistingCampaigns = [
-        {
-            basics: {
-                title: "CodeAI - Intelligent Code Completion",
-                category: "AI/ML",
-                goal: 200000
-            },
-            details: {
-                description: "Next-gen AI code assistant with real-time collaboration features.",
-                image: "assets/images/ai-project.png"
-            },
-            stats: {
-                raisedAmount: 157500,
-                backers: 324,
-                daysLeft: 15
-            }
-        },
-        {
-            basics: {
-                title: "DataFlow - Cloud Analytics Suite",
-                category: "SaaS",
-                goal: 100000
-            },
-            details: {
-                description: "Enterprise-grade analytics platform for modern data teams.",
-                image: "assets/images/saas-project.jpg"
-            },
-            stats: {
-                raisedAmount: 45000,
-                backers: 156,
-                daysLeft: 28
-            }
-        },
-        {
-            basics: {
-                title: "HomeHub - Smart Home Controller",
-                category: "Hardware",
-                goal: 100000
-            },
-            details: {
-                description: "Open-source smart home hub with Matter protocol support.",
-                image: "assets/images/hardware-project.jpg"
-            },
-            stats: {
-                raisedAmount: 90000,
-                backers: 412,
-                daysLeft: 7
-            }
+document.addEventListener('DOMContentLoaded', async function() {
+    // Fetch campaigns from API
+    async function fetchCampaigns() {
+        try {
+            const response = await fetch('https://localhost:7000/api/campaigns');
+            if (!response.ok) throw new Error('Failed to fetch campaigns');
+            const campaigns = await response.json();
+            
+            // Transform API data to match frontend format
+            return campaigns.map(campaign => ({
+                basics: {
+                    title: campaign.title,
+                    category: campaign.category,
+                    goal: campaign.goal
+                },
+                details: {
+                    description: campaign.description,
+                    image: campaign.imageUrl
+                },
+                stats: {
+                    raisedAmount: campaign.raisedAmount,
+                    backers: campaign.backerCount,
+                    daysLeft: campaign.durationInDays
+                }
+            }));
+        } catch (error) {
+            console.error('Error fetching campaigns:', error);
+            return [];
         }
-    ];
+    }
 
-    // Load user-created campaigns from localStorage
-    const userCampaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
-    
-    // Combine pre-existing and user campaigns
-    const allCampaigns = [...userCampaigns, ...preExistingCampaigns];
+    const campaigns = await fetchCampaigns();
     const campaignsGrid = document.querySelector('.campaigns-grid');
 
-    function renderCampaigns(campaigns) {
+    function renderCampaigns(campaignsToRender) {
         campaignsGrid.innerHTML = '';
         
-        campaigns.forEach(campaign => {
+        campaignsToRender.forEach(campaign => {
             const progressPercentage = (campaign.stats.raisedAmount / campaign.basics.goal) * 100;
 
             const campaignCard = `
@@ -98,15 +72,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Initial render
-    renderCampaigns(allCampaigns);
+    renderCampaigns(campaigns);
 
-    // Search functionality
+    // Search and filter functionality
     const searchInput = document.getElementById('campaign-search');
     let activeCategory = 'All';
 
     function filterCampaigns() {
         const searchTerm = searchInput.value.toLowerCase();
-        const filteredCampaigns = allCampaigns.filter(campaign => {
+        const filteredCampaigns = campaigns.filter(campaign => {
             const matchesSearch = campaign.basics.title.toLowerCase().includes(searchTerm);
             const matchesCategory = activeCategory === 'All' || campaign.basics.category === activeCategory;
             return matchesSearch && matchesCategory;
@@ -130,16 +104,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add search event listener with debounce
     searchInput.addEventListener('input', debounce(filterCampaigns, 300));
 
-    // Filter functionality
+    // Filter buttons
     const filterButtons = document.querySelectorAll('.filter-btn');
     filterButtons.forEach(button => {
         button.addEventListener('click', function() {
             filterButtons.forEach(btn => btn.classList.remove('active'));
             this.classList.add('active');
-
-            const category = this.textContent.trim();
-            activeCategory = category;
-
+            activeCategory = this.textContent.trim();
             filterCampaigns();
         });
     });
