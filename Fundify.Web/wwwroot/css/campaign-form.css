@@ -445,4 +445,142 @@ h1 {
     border-radius: 4px;
     font-weight: 500;
     text-decoration: none;
+}
+
+.text-danger {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.alert {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.reward-tier {
+    background: var(--gray-50);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.reward-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.reward-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.btn-remove-tier {
+    background: none;
+    border: none;
+    color: var(--gray-600);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    line-height: 1;
+}
+
+.btn-remove-tier:hover {
+    color: var(--primary-color);
+}
+
+#add-reward-tier {
+    width: 100%;
+    padding: 1rem;
+    margin: 1rem 0 2rem;
+    background: white;
+    border: 2px dashed var(--gray-300);
+    border-radius: 4px;
+    font-size: 1rem;
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#add-reward-tier:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.preview-section {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.preview-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.preview-section h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+}
+
+.preview-content {
+    background: var(--gray-50);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.preview-item {
+    margin-bottom: 1.5rem;
+}
+
+.preview-item:last-child {
+    margin-bottom: 0;
+}
+
+.preview-item strong {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--gray-600);
+    margin-bottom: 0.5rem;
+}
+
+.preview-image {
+    max-width: 100%;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+}
+
+.preview-reward-tier {
+    background: white;
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.preview-reward-tier:last-child {
+    margin-bottom: 0;
+}
+
+.preview-reward-tier h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
 } 

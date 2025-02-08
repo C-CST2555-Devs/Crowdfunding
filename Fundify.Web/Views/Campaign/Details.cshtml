@@ -1,0 +1,222 @@
+@model CampaignDetailsViewModel
+
+<div class="campaign-details">
+    <div class="category-breadcrumb">
+        <a href="#">@Model.Category</a>
+    </div>
+
+    <h1 class="campaign-title">@Model.Title</h1>
+    <div class="campaign-byline">
+        by <a href="#" class="creator-link">@Model.CreatorName</a> in @Model.Category, @Model.Location
+    </div>
+
+        <div class="tab-content">
+            <div id="overview" class="tab-pane active">
+                <div class="campaign-content">
+                    <div class="campaign-main">
+                        <div class="campaign-image">
+                            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                            {
+                                <img src="@Url.Content(Model.ImageUrl)" alt="@Model.Title" 
+                                     onerror="this.onerror=null; this.src='@Url.Content("~/images/placeholder.png")';" />
+                            }
+                        </div>
+
+                        <div class="campaign-nav">
+                            <div class="nav-links">
+                                <a href="#" class="active">Overview</a>
+                                <a href="#">Updates <span>0</span></a>
+                                <a href="#">Comments <span>42</span></a>
+                                <a href="#">Supporters <span>@Model.BackerCount</span></a>
+                            </div>
+                            <div class="share-project">
+                                <button onclick="copyLink()" class="share-btn">
+                                    <i class="fas fa-share"></i> Share this project
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="campaign-description">
+                            @Model.Description
+                        </div>
+                    </div>
+
+                    <div class="campaign-sidebar">
+                        <div class="funding-stats">
+                            <div class="amount-raised">£@Model.RaisedAmount.ToString("N0")</div>
+                            <div class="goal-text">raised of £@Model.Goal.ToString("N0") target</div>
+                            
+                            <div class="progress-bar">
+                                <div class="progress" style="width: @Model.ProgressPercentage%"></div>
+                            </div>
+
+                            <div class="stats-grid">
+                                <div class="stat">
+                                    <div class="stat-value">@Model.ProgressPercentage.ToString("N0")%</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-value">@Model.BackerCount</div>
+                                    <div class="stat-label">@(Model.BackerCount == 1 ? "supporter" : "supporters")</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-value">@Model.DaysLeft</div>
+                                    <div class="stat-label">@(Model.DaysLeft == 1 ? "day left" : "days left")</div>
+                                </div>
+                            </div>
+
+                            @if (Model.IsActive)
+                            {
+                                <form asp-controller="Wallet" asp-action="Checkout" method="get" class="support-options">
+                                    <input type="hidden" name="campaignId" value="@Model.Id" />
+                                    
+                                    <div style="display: none;" class="quick-amounts">
+                                        <input type="radio" id="amount20" name="amount" value="20" class="amount-input" />
+                                        <label for="amount20" class="amount-btn">£20</label>
+                                        
+                                        <input type="radio" id="amount40" name="amount" value="40" class="amount-input" checked />
+                                        <label for="amount40" class="amount-btn active">£40</label>
+                                        
+                                        <input type="radio" id="amount60" name="amount" value="60" class="amount-input" />
+                                        <label for="amount60" class="amount-btn">£60</label>
+                                        
+                                        <input type="radio" id="amount100" name="amount" value="100" class="amount-input" />
+                                        <label for="amount100" class="amount-btn">£100</label>
+                                    </div>
+
+                                    <div style="display: none;" class="custom-amount">
+                                        <label>Or enter custom amount</label>
+                                        <div class="amount-input">
+                                            <span class="currency">£</span>
+                                            <input type="number" name="amount" value="40" min="1" />
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn-primary">Support Us</button>
+                                    <div class="support-note">
+                                        <i class="fas fa-info-circle"></i>
+                                        Keep what you raise - this project will receive all pledged funds on @Model.EndDate.ToString("dd MMMM yyyy") at 8:40am
+                                    </div>
+                                </form>
+                            }
+                            else
+                            {
+                                <div class="campaign-ended">
+                                    <i class="fas fa-clock"></i>
+                                    This project ended on @Model.EndDate.ToString("dd MMMM yyyy")
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="updates" class="tab-pane">
+                <div class="updates-list">
+                    <div class="empty-state">
+                        <i class="fas fa-newspaper"></i>
+                        <p>No updates yet</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="comments" class="tab-pane">
+                <div class="comments-section">
+                    @foreach (var comment in Model.Comments ?? Enumerable.Empty<CommentViewModel>())
+                    {
+                        <div class="comment">
+                            <div class="comment-header">
+                                <img src="@comment.UserAvatar" alt="@comment.UserName" class="avatar" />
+                                <div class="comment-meta">
+                                    <span class="username">@comment.UserName</span>
+                                    <span class="timestamp">@comment.CreatedAt.ToString("MMM d, yyyy")</span>
+                                </div>
+                            </div>
+                            <div class="comment-content">
+                                @comment.Content
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div id="supporters" class="tab-pane">
+                <div class="supporters-table">
+                    <div class="supporters-header">
+                        <div class="supporter-col">Supporter</div>
+                        <div class="amount-col">Amount</div>
+                        <div class="date-col">Date</div>
+                    </div>
+                    @foreach (var supporter in Model.Supporters ?? Enumerable.Empty<SupporterViewModel>())
+                    {
+                        <div class="supporter-row">
+                            <div class="supporter-col">
+                                <div class="supporter-info">
+                                    <img src="@supporter.Avatar" alt="@supporter.Name" class="avatar" />
+                                    <span class="name">@supporter.Name</span>
+                                </div>
+                            </div>
+                            <div class="amount-col">
+                                <span class="pledge-amount">£@supporter.Amount.ToString("N0")</span>
+                            </div>
+                            <div class="date-col">
+                                <span class="pledge-date">@supporter.PledgedAt.ToString("MMM d, yyyy")</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Copy link functionality
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href);
+            const btn = document.querySelector('.share-btn');
+            btn.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-share"></i>';
+            }, 2000);
+        }
+
+        // Quick donate buttons
+        document.querySelectorAll('.amount-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelector('.custom-amount input').value = this.textContent.replace('£', '');
+            });
+        });
+
+        // Handle support button click
+        document.querySelector('.btn-primary').addEventListener('click', function() {
+            const amount = document.querySelector('.amount-input input').value;
+            window.location.href = `/Wallet/Checkout?campaignId=@Model.Id&amount=${amount}`;
+        });
+
+        // Handle reward selection
+        document.querySelectorAll('.btn-select-reward').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const rewardId = this.dataset.rewardId;
+                const amount = this.dataset.amount;
+                window.location.href = `/Wallet/Checkout?campaignId=@Model.Id&amount=${amount}&rewardId=${rewardId}`;
+            });
+        });
+
+        // Tab functionality
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons and panes
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+                
+                // Add active class to clicked button and corresponding pane
+                this.classList.add('active');
+                const tabId = this.dataset.tab;
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+    </script>
+} 

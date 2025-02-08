@@ -65,4 +65,67 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
-}); 
+
+    // Rewards form
+    const rewardsContainer = document.getElementById('rewards-container');
+    const addRewardButton = document.getElementById('add-reward-tier');
+
+    if (rewardsContainer && addRewardButton) {
+        let rewardCount = 1;
+
+        addRewardButton.addEventListener('click', () => {
+            rewardCount++;
+            const newTier = document.createElement('div');
+            newTier.className = 'reward-tier';
+            newTier.innerHTML = `
+                <div class="reward-header">
+                    <h3>Reward Tier ${rewardCount}</h3>
+                    <button type="button" class="btn-remove-tier">×</button>
+                </div>
+                <div class="form-group">
+                    <label>Tier Name</label>
+                    <input type="text" name="Rewards[${rewardCount-1}].Name" class="form-control" 
+                           placeholder="e.g., Early Bird Access" required>
+                </div>
+                <div class="form-group">
+                    <label>Pledge Amount</label>
+                    <div class="input-with-prefix">
+                        <span class="prefix">$</span>
+                        <input type="number" name="Rewards[${rewardCount-1}].Amount" class="form-control" 
+                               placeholder="e.g., 99" min="1" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="Rewards[${rewardCount-1}].Description" class="form-control" rows="3" 
+                             placeholder="What backers will receive..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Quantity Available (Optional)</label>
+                    <input type="number" name="Rewards[${rewardCount-1}].Limit" class="form-control" 
+                           placeholder="Leave blank for unlimited" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Estimated Delivery</label>
+                    <input type="month" name="Rewards[${rewardCount-1}].EstimatedDelivery" class="form-control" required>
+                </div>
+            `;
+            rewardsContainer.appendChild(newTier);
+        });
+
+        rewardsContainer.addEventListener('click', e => {
+            if (e.target.classList.contains('btn-remove-tier')) {
+                const tier = e.target.closest('.reward-tier');
+                if (rewardsContainer.children.length > 1) {
+                    tier.remove();
+                    rewardCount--;
+                }
+            }
+        });
+    }
+});
+
+function updateFileName(input) {
+    const fileName = input.files[0]?.name ?? "No file chosen";
+    input.closest('.upload-content').querySelector('.file-name').textContent = fileName;
+} 

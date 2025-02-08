@@ -3,38 +3,31 @@ using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using System.Text.Json.Serialization;
 
 namespace Fundify.Web.ViewModels
 {
     public class CampaignViewModel
     {
-        [Required(ErrorMessage = "Please enter a project title")]
         public string Title { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Please select a category")]
         public string Category { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Please enter a funding goal")]
-        [Range(1000, double.MaxValue, ErrorMessage = "Goal must be at least $1,000")]
         public decimal Goal { get; set; }
-
-        [Required(ErrorMessage = "Please select a campaign duration")]
-        [Range(30, 60, ErrorMessage = "Duration must be between 30 and 60 days")]
         public int DurationInDays { get; set; }
-
-        // Make these optional since they're for later steps
-        public string? Description { get; set; }
-        public List<RewardViewModel> Rewards { get; set; } = new();
+        public string Description { get; set; } = string.Empty;
 
         [Display(Name = "Project Image")]
         [AllowedExtensions(new[] { ".jpg", ".jpeg", ".png" })]
         [MaxFileSize(5 * 1024 * 1024)] // 5MB
         public IFormFile? ImageFile { get; set; }
-        public string? ImageFileName { get; set; }
+        
+        public string? ImageUrl { get; set; }
+        public List<RewardViewModel> Rewards { get; set; } = new();
     }
 
     public class RewardViewModel
     {
+        public int Id { get; set; }
+
         [Required]
         public string Name { get; set; } = string.Empty;
 

@@ -1,32 +1,84 @@
 @model Campaign
 
-<article class="campaign-card">
-    <div class="campaign-image">
-        @if (!string.IsNullOrEmpty(Model.ImageUrl))
-        {
-            <img src="@Model.ImageUrl" alt="@Model.Title">
-        }
-        else
-        {
-            <div class="placeholder-image"></div>
-        }
-        <span class="category">@Model.Category</span>
-    </div>
-    <div class="campaign-content">
-        <h3>@Model.Title</h3>
-        <p class="description">@Model.Description</p>
-        <div class="progress-wrapper">
-            <div class="progress-bar">
-                <div class="progress" style="width: @(Model.RaisedAmount / Model.Goal * 100)%"></div>
+@if (User.Identity?.IsAuthenticated ?? false)
+{
+    <a href="@Url.Action("Details", "Campaign", new { id = Model.Id })" class="campaign-card">
+        <article>
+            <div class="campaign-image">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" alt="@Model.Title" 
+                         onerror="this.onerror=null; this.src='/images/placeholder.png';" />
+                }
+                else
+                {
+                    <div class="placeholder-image">
+                        <i class="fas fa-image"></i>
+                    </div>
+                }
+                <span class="category">@Model.Category</span>
             </div>
-            <div class="campaign-stats">
-                <div class="amount">$@Model.RaisedAmount.ToString("N0") raised</div>
-                <div class="target">of $@Model.Goal.ToString("N0")</div>
+            <div class="campaign-content">
+                <h3>@Model.Title</h3>
+                <p class="description" style="font-size: 15px; width: 150px;">@Model.Description</p>
+                <div class="progress-wrapper">
+                    <div class="progress-bar">
+                        @{
+                            var progressPercentage = Model.Goal > 0 ? (Model.RaisedAmount / Model.Goal * 100) : 0;
+                        }
+                        <div class="progress" style="width: @progressPercentage%"></div>
+                    </div>
+                    <div class="campaign-stats">
+                        <div class="amount" style="font-size: 30px;">£@Model.RaisedAmount.ToString("N0") raised</div>
+                        <div class="target">of $@Model.Goal.ToString("N0")</div>
+                    </div>
+                    <div class="campaign-meta">
+                        <span>@Model.BackerCount backers</span>
+                        <span>@Model.DurationInDays days left</span>
+                    </div>
+                </div>
             </div>
-            <div class="campaign-meta">
-                <span>@Model.BackerCount backers</span>
-                <span>@Model.DurationInDays days left</span>
+        </article>
+    </a>
+}
+else
+{
+    <a asp-controller="Auth" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "Campaign", new { id = Model.Id })" class="campaign-card">
+        <article>
+            <div class="campaign-image">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" alt="@Model.Title" 
+                         onerror="this.onerror=null; this.src='/images/placeholder.png';" />
+                }
+                else
+                {
+                    <div class="placeholder-image">
+                        <i class="fas fa-image"></i>
+                    </div>
+                }
+                <span class="category">@Model.Category</span>
             </div>
-        </div>
-    </div>
-</article> 
+            <div class="campaign-content">
+                <h3>@Model.Title</h3>
+                <p class="description">@Model.Description</p>
+                <div class="progress-wrapper">
+                    <div class="progress-bar">
+                        @{
+                            var progressPercentage = Model.Goal > 0 ? (Model.RaisedAmount / Model.Goal * 100) : 0;
+                        }
+                        <div class="progress" style="width: @progressPercentage%"></div>
+                    </div>
+                    <div class="campaign-stats">
+                        <div class="amount">$@Model.RaisedAmount.ToString("N0") raised</div>
+                        <div class="target">of $@Model.Goal.ToString("N0")</div>
+                    </div>
+                    <div class="campaign-meta">
+                        <span>@Model.BackerCount backers</span>
+                        <span>@Model.DurationInDays days left</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </a>
+} 

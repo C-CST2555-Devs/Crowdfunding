@@ -1,0 +1,67 @@
+@model UserProfileViewModel
+@using Fundify.Web.Models
+
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-info">
+            <h1>@Model.FirstName @Model.LastName</h1>
+            <div class="account-badge @Model.AccountType.ToString().ToLower()">
+                @Model.AccountType
+            </div>
+            <p class="member-since">Member since @Model.CreatedAt.ToString("MMMM yyyy")</p>
+        </div>
+    </div>
+
+    <div class="profile-content">
+        <div class="profile-section">
+            <h2>Account Details</h2>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <label>Email</label>
+                    <span>@Model.Email</span>
+                </div>
+                <div class="detail-item">
+                    <label>Account Type</label>
+                    <span>@Model.AccountType</span>
+                </div>
+                <div class="detail-item">
+                    <label>Onboarding Status</label>
+                    <span>@(Model.HasCompletedOnboarding ? "Completed" : "Pending")</span>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.AccountType == AccountType.Backer)
+        {
+            <div class="profile-section">
+                <h2>Backing History</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-value">@Model.TotalBackedProjects</span>
+                        <span class="stat-label">Projects Backed</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">$@Model.TotalInvested?.ToString("N0")</span>
+                        <span class="stat-label">Total Invested</span>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (Model.AccountType == AccountType.Creator)
+        {
+            <div class="profile-section">
+                <h2>Creator Stats</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-value">@Model.CreatedCampaigns</span>
+                        <span class="stat-label">Campaigns Created</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">$@Model.TotalRaised?.ToString("N0")</span>
+                        <span class="stat-label">Total Raised</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div> 

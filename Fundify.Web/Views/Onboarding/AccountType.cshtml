@@ -1,0 +1,83 @@
+@using Fundify.Web.Models
+@model Fundify.Web.Models.AccountType
+
+<div class="onboarding-container">
+    <div class="onboarding-box">
+        <h2>Choose Your Account Type</h2>
+        <p class="subtitle">Select the type of account that best fits your needs</p>
+
+        <form asp-action="AccountType" method="post">
+            <div class="account-types">
+                <div class="account-type-card" onclick="selectAccountType('backer')">
+                    <input type="radio" name="accountType" value="0" id="backer" required />
+                    <label for="backer">
+                        <i class="fas fa-user"></i>
+                        <h3>Backer</h3>
+                        <p>Support innovative projects and receive rewards</p>
+                        <ul>
+                            <li>Browse and discover projects</li>
+                            <li>Back campaigns you love</li>
+                            <li>Track your investments</li>
+                        </ul>
+                    </label>
+                </div>
+
+                <div class="account-type-card" onclick="selectAccountType('creator')">
+                    <input type="radio" name="accountType" value="1" id="creator" required />
+                    <label for="creator">
+                        <i class="fas fa-lightbulb"></i>
+                        <h3>Creator</h3>
+                        <p>Launch your own crowdfunding campaign</p>
+                        <ul>
+                            <li>Create and manage campaigns</li>
+                            <li>Engage with backers</li>
+                            <li>Track funding progress</li>
+                        </ul>
+                    </label>
+                </div>
+
+                <div class="account-type-card" onclick="selectAccountType('admin')">
+                    <input type="radio" name="accountType" value="2" id="admin" required />
+                    <label for="admin">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>Administrator</h3>
+                        <p>Manage the platform and ensure quality</p>
+                        <ul>
+                            <li>Review and approve campaigns</li>
+                            <li>Manage platform settings</li>
+                            <li>Monitor user activity</li>
+                        </ul>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary">Continue</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function selectAccountType(type) {
+            // Remove selected class from all cards
+            document.querySelectorAll('.account-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked card
+            const selectedCard = document.querySelector(`#${type}`).closest('.account-type-card');
+            selectedCard.classList.add('selected');
+            
+            // Check the radio button
+            document.querySelector(`#${type}`).checked = true;
+        }
+
+        // Add click event to the entire card
+        document.querySelectorAll('.account-type-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                selectAccountType(radio.id);
+            });
+        });
+    </script>
+} 

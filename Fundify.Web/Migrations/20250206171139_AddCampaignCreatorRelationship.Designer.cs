@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fundify.Web.Migrations
 {
     [DbContext(typeof(FundifyContext))]
-    [Migration("20250203221041_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250206171139_AddCampaignCreatorRelationship")]
+    partial class AddCampaignCreatorRelationship
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,6 +36,9 @@ namespace Fundify.Web.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("CreatorId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -47,6 +50,7 @@ namespace Fundify.Web.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ImageUrl")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("RaisedAmount")
@@ -57,6 +61,8 @@ namespace Fundify.Web.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
 
                     b.ToTable("Campaigns");
                 });
@@ -94,6 +100,53 @@ namespace Fundify.Web.Migrations
                     b.ToTable("Rewards");
                 });
 
+            modelBuilder.Entity("Fundify.Web.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AccountType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("HasCompletedOnboarding")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Fundify.Web.Models.Campaign", b =>
+                {
+                    b.HasOne("Fundify.Web.Models.User", "Creator")
+                        .WithMany("Campaigns")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+                });
+
             modelBuilder.Entity("Fundify.Web.Models.Reward", b =>
                 {
                     b.HasOne("Fundify.Web.Models.Campaign", "Campaign")
@@ -108,6 +161,11 @@ namespace Fundify.Web.Migrations
             modelBuilder.Entity("Fundify.Web.Models.Campaign", b =>
                 {
                     b.Navigation("Rewards");
+                });
+
+            modelBuilder.Entity("Fundify.Web.Models.User", b =>
+                {
+                    b.Navigation("Campaigns");
                 });
 #pragma warning restore 612, 618
         }

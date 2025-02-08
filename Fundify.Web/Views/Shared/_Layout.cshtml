@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/campaign-form.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 </head>
 <body>
     <header>
@@ -21,13 +27,37 @@
                 <a href="#community">Tech Community</a>
             </div>
             <div class="auth-buttons">
-                <a asp-controller="Campaign" asp-action="Create" class="btn-primary">Start a Campaign</a>
-                <a href="/signin" class="btn-secondary">Sign in</a>
+                @if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    <div class="user-menu">
+                        <span class="user-name">
+                            @User.FindFirst("FirstName")?.Value @User.FindFirst("LastName")?.Value
+                        </span>
+                        <div class="user-actions">
+                            <a asp-controller="User" asp-action="Profile" class="btn-secondary">Profile</a>
+                            <a asp-controller="Campaign" asp-action="Create" class="btn-primary" style="margin-bottom: 15px;">Start a Campaign</a>
+                            <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                                <button type="submit" class="btn-secondary" style="width: 150px;">Sign out</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <a asp-controller="Auth" asp-action="Login" asp-route-returnUrl="@Url.Action("Create", "Campaign")" class="btn-primary">Start a Campaign</a>
+                    <a asp-controller="Auth" asp-action="Login" class="btn-secondary" style="width: 150px;">Sign in</a>
+                }
             </div>
         </nav>
     </header>
 
     <main>
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+        }
         @RenderBody()
     </main>
 
@@ -53,9 +83,6 @@
             </div>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/js/campaign-form.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

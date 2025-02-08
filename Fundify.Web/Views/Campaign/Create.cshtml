@@ -49,7 +49,7 @@
             </div>
         </div>
 
-        <form id="campaign-basics" asp-action="Create" method="post">
+        <form id="campaign-basics" asp-action="Create" method="post" enctype="multipart/form-data">
             <input type="hidden" name="step" value="@currentStep" />
 
             @if (currentStep == 1)
@@ -115,12 +115,13 @@
                     <div class="file-upload-box">
                         <div class="upload-content">
                             <label for="ImageFile" class="upload-btn">Choose file</label>
-                            <span class="file-name">@(Model?.ImageFileName ?? "No file chosen")</span>
+                            <span class="file-name">@(Model?.ImageFile?.FileName ?? "No file chosen")</span>
                             <input type="file" id="ImageFile" name="ImageFile" class="hidden" 
-                                   accept="image/png,image/jpeg" asp-for="ImageFile">
+                                   accept="image/png,image/jpeg" asp-for="ImageFile"
+                                   onchange="updateFileName(this)">
                         </div>
                     </div>
-                    <p class="input-hint">Recommended: 1200x675px, PNG or JPG</p>
+                    <p class="input-hint">Recommended: 1200x675px, PNG or JPG (max 5MB)</p>
                     <span asp-validation-for="ImageFile" class="text-danger"></span>
                 </div>
 
@@ -148,51 +149,165 @@
                 <h1>Rewards</h1>
                 <p class="form-subtitle">Create compelling rewards for your backers</p>
                 
-                <!-- Rewards form fields will go here -->
+                <div id="rewards-container">
+                    <div class="reward-tier">
+                        <div class="reward-header">
+                            <h3>Reward Tier 1</h3>
+                            <button type="button" class="btn-remove-tier">×</button>
+                        </div>
+                        <div class="form-group">
+                            <label>Tier Name</label>
+                            <input type="text" name="Rewards[0].Name" class="form-control" 
+                                   placeholder="e.g., Early Bird Access" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Pledge Amount</label>
+                            <div class="input-with-prefix">
+                                <span class="prefix">$</span>
+                                <input type="number" name="Rewards[0].Amount" class="form-control" 
+                                       placeholder="e.g., 99" min="1" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea name="Rewards[0].Description" class="form-control" rows="3" 
+                                     placeholder="What backers will receive..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantity Available (Optional)</label>
+                            <input type="number" name="Rewards[0].Limit" class="form-control" 
+                                   placeholder="Leave blank for unlimited" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Estimated Delivery</label>
+                            <input type="month" name="Rewards[0].EstimatedDelivery" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" id="add-reward-tier" class="btn-secondary">
+                    + Add Another Reward Tier
+                </button>
             }
             else
             {
                 <h1>Preview Your Campaign</h1>
                 <p class="form-subtitle">Review everything before launch</p>
                 
-                <!-- Preview content will go here -->
+                <div class="preview-section">
+                    <h2>Basic Information</h2>
+                    <div class="preview-content">
+                        <div class="preview-item">
+                            <strong>Project Title</strong>
+                            <p>@TempData.Peek("Title")</p>
+                        </div>
+                        <div class="preview-item">
+                            <strong>Category</strong>
+                            <p>@TempData.Peek("Category")</p>
+                        </div>
+                        <div class="preview-item">
+                            <strong>Funding Goal</strong>
+                            <p>$@TempData.Peek("Goal")</p>
+                        </div>
+                        <div class="preview-item">
+                            <strong>Campaign Duration</strong>
+                            <p>@TempData.Peek("DurationInDays") days</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preview-section">
+                    <h2>Project Details</h2>
+                    <div class="preview-content">
+                        @if (!string.IsNullOrEmpty(TempData.Peek("ImageUrl")?.ToString()))
+                        {
+                            <div class="preview-item">
+                                <strong>Project Image</strong>
+                                <img src="@TempData.Peek("ImageUrl")" alt="Project Image" class="preview-image">
+                            </div>
+                        }
+                        <div class="preview-item">
+                            <strong>Description</strong>
+                            <p>@TempData.Peek("Description")</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preview-section">
+                    <h2>Rewards</h2>
+                    <div class="preview-content" id="rewards-preview">
+                        @if (Model?.Rewards != null)
+                        {
+                            foreach (var reward in Model.Rewards)
+                            {
+                                <div class="preview-reward-tier">
+                                    <h3>@reward.Name</h3>
+                                    <div class="preview-item">
+                                        <strong>Pledge Amount:</strong> $@reward.Amount
+                                    </div>
+                                    <div class="preview-item">
+                                        <strong>Description:</strong>
+                                        <p>@reward.Description</p>
+                                    </div>
+                                    @if (reward.Limit.HasValue)
+                                    {
+                                        <div class="preview-item">
+                                            <strong>Limited Quantity:</strong> @reward.Limit
+                                        </div>
+                                    }
+                                    <div class="preview-item">
+                                        <strong>Estimated Delivery:</strong> @reward.EstimatedDelivery.ToString("MMM yyyy")
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
             }
 
             <div class="form-actions">
                 @if (currentStep > 1)
                 {
-                    <a asp-action="Create" asp-route-step="@(currentStep - 1)" class="btn-secondary">Back</a>
+                    <a asp-action="Create" asp-route-step="@(currentStep - 1)" class="btn-secondary" style="height: 40px; margin-top: 15px;">Back</a>
                 }
                 else
                 {
-                    <a asp-controller="Home" asp-action="Index" class="btn-secondary">Cancel</a>
+                    <a asp-controller="Home" asp-action="Index" class="btn-secondary" style="height: 40px; margin-top: 15px;">Cancel</a>
                 }
 
-                <button type="submit" class="btn-primary">
-                    @if (currentStep == 2)
-                    {
-                        <span>Continue to Rewards</span>
-                    }
-                    else if (currentStep == 4)
-                    {
-                        <span>Launch Campaign</span>
-                    }
-                    else
-                    {
-                        <span>Continue</span>
-                    }
-                </button>
+                @if (currentStep == 4)
+                { 
+                    <button type="submit" class="btn-primary" id="launch-campaign">Launch Campaign</button>
+                }
+                else
+                {
+                    <button type="submit" class="btn-primary">
+                        @if (currentStep == 2)
+                        {
+                            <span>Continue to Rewards</span>
+                        }
+                        else
+                        {
+                            <span>Continue</span>
+                        }
+                    </button>
+                }
             </div>
         </form>
     </div>
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
     <script>
-        // Add client-side validation
         $(document).ready(function() {
-            $("#campaign-basics").validate();
+            $("#campaign-basics").validate({
+                submitHandler: function(form) {
+                    form.submit();
+                }
+            });
         });
     </script>
 } 

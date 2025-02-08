@@ -1,0 +1,212 @@
+@model CheckoutViewModel
+
+<div class="checkout-container">
+    <div class="checkout-header">
+        <h1>Support this project</h1>
+        <div class="campaign-name">@Model.CampaignTitle</div>
+    </div>
+
+    <div class="checkout-content">
+        <div class="payment-details">
+            <div class="amount-section">
+                <h2>Your pledge</h2>
+                <form id="pledge-form" asp-action="ProcessPayment" method="post">
+                    <input type="hidden" asp-for="CampaignId" />
+                    <input type="hidden" asp-for="RewardId" />
+                    <input type="hidden" name="TipAmount" id="tip-amount-input" value="0" />
+                    
+                    <div class="amount-options">
+                        <div class="amount-buttons">
+                            <button type="button" class="amount-btn" data-amount="20">£20</button>
+                            <button type="button" class="amount-btn" data-amount="40">£40</button>
+                            <button type="button" class="amount-btn" data-amount="60">£60</button>
+                            <button type="button" class="amount-btn" data-amount="100">£100</button>
+                        </div>
+                        <div class="amount-input">
+                            <span class="currency">£</span>
+                            <input type="number" 
+                                   asp-for="Amount" 
+                                   min="1" 
+                                   step="1"
+                                   oninput="updatePledgeAmount(this.value)"
+                                   class="form-control" />
+                        </div>
+                    </div>
+
+                    @if (Model.RewardId.HasValue)
+                    {
+                        <div class="reward-info">
+                            <h3>Selected reward:</h3>
+                            <div class="reward-name">@Model.RewardName</div>
+                            <p class="reward-description">@Model.RewardDescription</p>
+                        </div>
+                    }
+                
+                    <div class="balance-section">
+                        <h2>Your wallet</h2>
+                        <div class="available-balance">
+                            Available: £<span id="available-balance">@Model.AvailableBalance.ToString("N0")</span>
+                        </div>
+                        
+                        <div id="balance-warning" class="balance-warning" style="display: none">
+                            <i class="fas fa-exclamation-circle"></i>
+                            Insufficient balance. Add more funds to continue.
+                        </div>
+                    </div>
+
+                    <div class="summary-section">
+                        <h2>Summary</h2>
+                        <div class="summary-content">
+                            <div class="summary-row">
+                                <span>Your donation</span>
+                                <span>£<span id="donation-amount">@Model.Amount.ToString("N0")</span></span>
+                            </div>
+                            <div class="tip-section">
+                                <div class="tip-header">
+                                    <span>Support Fundify</span>
+                                    <span>£<span id="platform-tip">0</span></span>
+                                </div>
+                                <p class="tip-description">
+                                    Fundify helps projects raise funds with 0% platform fees.
+                                    Tips help us continue supporting more projects.
+                                </p>
+                                <div class="tip-slider-container">
+                                    <input type="range" 
+                                           id="tip-slider" 
+                                           min="0" 
+                                           max="30" 
+                                           value="20" 
+                                           class="tip-slider">
+                                    <div class="tip-labels">
+                                        <span>0%</span>
+                                        <span>10%</span>
+                                        <span>20%</span>
+                                        <span>30%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="summary-row total">
+                                <span>Total to pay</span>
+                                <span>£<span id="total-amount">@Model.Amount.ToString("N0")</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="terms-section">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <label for="terms">
+                                I accept the <a href="/terms" target="_blank">Terms and Conditions</a> and have read the
+                                <a href="/fundraising-guidelines" target="_blank">Fundraising Guidelines</a>.
+                            </label>
+                        </div>
+                        
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="anonymous" name="anonymous">
+                            <label for="anonymous">Make my donation anonymous</label>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="newsletter" name="newsletter">
+                            <label for="newsletter">Keep me updated about this project's progress</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" 
+                            id="pledge-button" 
+                            class="btn-primary">
+                        Complete pledge
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="checkout-sidebar">
+            <div class="support-info">
+                <i class="fas fa-info-circle"></i>
+                <p>You won't be charged until the campaign reaches its goal.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function updateSummary() {
+            const pledgeInput = document.querySelector('input[name="Amount"]');
+            const tipSlider = document.getElementById('tip-slider');
+            const availableBalance = @Model.AvailableBalance;
+            const termsCheckbox = document.getElementById('terms');
+            
+            const pledgeAmount = parseFloat(pledgeInput.value) || 0;
+            const tipPercentage = parseInt(tipSlider.value) || 0;
+            const tipAmount = (pledgeAmount * tipPercentage) / 100;
+            const totalAmount = pledgeAmount + tipAmount;
+            
+            // Update display values
+            document.getElementById('donation-amount').textContent = pledgeAmount.toFixed(2);
+            document.getElementById('platform-tip').textContent = tipAmount.toFixed(2);
+            document.getElementById('total-amount').textContent = totalAmount.toFixed(2);
+            document.getElementById('tip-amount-input').value = tipAmount.toFixed(2);
+            
+            // Check against available balance and terms acceptance
+            const balanceWarning = document.getElementById('balance-warning');
+            const pledgeButton = document.getElementById('pledge-button');
+            
+            const isValidAmount = totalAmount <= availableBalance;
+            const termsAccepted = termsCheckbox.checked;
+            
+            if (!isValidAmount || !termsAccepted) {
+                pledgeButton.disabled = true;
+                pledgeButton.classList.add('disabled');
+            } else {
+                pledgeButton.disabled = false;
+                pledgeButton.classList.remove('disabled');
+            }
+            
+            // Show/hide balance warning
+            balanceWarning.style.display = !isValidAmount ? 'flex' : 'none';
+        }
+
+        // Handle pledge amount changes
+        document.querySelector('input[name="Amount"]').addEventListener('input', updateSummary);
+
+        // Handle tip slider changes
+        document.getElementById('tip-slider').addEventListener('input', updateSummary);
+
+        // Handle terms checkbox changes
+        document.getElementById('terms').addEventListener('change', updateSummary);
+
+        // Form submission validation
+        document.getElementById('pledge-form').addEventListener('submit', function(e) {
+            const termsCheckbox = document.getElementById('terms');
+            if (!termsCheckbox.checked) {
+                e.preventDefault();
+                alert('Please accept the Terms and Conditions to continue');
+            }
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', updateSummary);
+
+        // Add this function to handle amount button clicks
+        function handleAmountButtonClick(e) {
+            const buttons = document.querySelectorAll('.amount-btn');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            
+            const button = e.target;
+            button.classList.add('selected');
+            
+            const amount = button.dataset.amount;
+            const amountInput = document.querySelector('input[name="Amount"]');
+            amountInput.value = amount;
+            
+            updateSummary();
+        }
+
+        // Add event listeners for amount buttons
+        document.querySelectorAll('.amount-btn').forEach(button => {
+            button.addEventListener('click', handleAmountButtonClick);
+        });
+    </script>
+} 

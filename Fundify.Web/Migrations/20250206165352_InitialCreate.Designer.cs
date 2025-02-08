@@ -3,6 +3,7 @@ using System;
 using Fundify.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fundify.Web.Migrations
 {
     [DbContext(typeof(FundifyContext))]
-    partial class FundifyContextModelSnapshot : ModelSnapshot
+    [Migration("20250206165352_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.1");
@@ -47,7 +50,6 @@ namespace Fundify.Web.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("RaisedAmount")
@@ -64,38 +66,6 @@ namespace Fundify.Web.Migrations
                     b.ToTable("Campaigns");
                 });
 
-            modelBuilder.Entity("Fundify.Web.Models.Pledge", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("CampaignId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("RewardId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CampaignId");
-
-                    b.HasIndex("RewardId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Pledges");
-                });
-
             modelBuilder.Entity("Fundify.Web.Models.Reward", b =>
                 {
                     b.Property<int>("Id")
@@ -106,6 +76,9 @@ namespace Fundify.Web.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("CampaignId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CampaignId1")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
@@ -125,6 +98,8 @@ namespace Fundify.Web.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CampaignId");
+
+                    b.HasIndex("CampaignId1");
 
                     b.ToTable("Rewards");
                 });
@@ -168,7 +143,7 @@ namespace Fundify.Web.Migrations
             modelBuilder.Entity("Fundify.Web.Models.Campaign", b =>
                 {
                     b.HasOne("Fundify.Web.Models.User", "Creator")
-                        .WithMany("Campaigns")
+                        .WithMany()
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -176,37 +151,17 @@ namespace Fundify.Web.Migrations
                     b.Navigation("Creator");
                 });
 
-            modelBuilder.Entity("Fundify.Web.Models.Pledge", b =>
-                {
-                    b.HasOne("Fundify.Web.Models.Campaign", "Campaign")
-                        .WithMany()
-                        .HasForeignKey("CampaignId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Fundify.Web.Models.Reward", "Reward")
-                        .WithMany()
-                        .HasForeignKey("RewardId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Fundify.Web.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Campaign");
-
-                    b.Navigation("Reward");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Fundify.Web.Models.Reward", b =>
                 {
-                    b.HasOne("Fundify.Web.Models.Campaign", "Campaign")
+                    b.HasOne("Fundify.Web.Models.Campaign", null)
                         .WithMany("Rewards")
                         .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Fundify.Web.Models.Campaign", "Campaign")
+                        .WithMany()
+                        .HasForeignKey("CampaignId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -216,11 +171,6 @@ namespace Fundify.Web.Migrations
             modelBuilder.Entity("Fundify.Web.Models.Campaign", b =>
                 {
                     b.Navigation("Rewards");
-                });
-
-            modelBuilder.Entity("Fundify.Web.Models.User", b =>
-                {
-                    b.Navigation("Campaigns");
                 });
 #pragma warning restore 612, 618
         }
